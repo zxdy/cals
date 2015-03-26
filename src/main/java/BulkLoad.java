@@ -21,14 +21,12 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
- * Usage: java bulkload.BulkLoad
+ * Usage:
  */
 public class BulkLoad {
     /**
@@ -68,9 +66,9 @@ public class BulkLoad {
      * It is like prepared statement. You fill in place holder for each data.
      */
     public static final String INSERT_STMT = String.format("INSERT INTO %s.%s (" +
-            "ticker, date, open, high, low, close, volume, adj_close" +
+            "date, open, high, low, close, volume, adj_close" +
             ") VALUES (" +
-            "?, ?, ?, ?, ?, ?, ?, ?" +
+            "?, ?, ?, ?, ?, ?, ?" +
             ")", KEYSPACE, TABLE);
 
     public static void main(String[] args) throws IOException {
@@ -125,8 +123,12 @@ public class BulkLoad {
             } catch (InvalidRequestException e){
                 e.printStackTrace();
             } finally {
-            csvReader.close();
-            reader.close();
+            if (csvReader!=null){
+                csvReader.close();
+            }
+            if (reader != null){
+                reader.close();
+            }
             writer.close();
         }
         System.exit(0);
