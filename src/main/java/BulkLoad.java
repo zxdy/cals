@@ -23,7 +23,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 /**
  * Usage:
@@ -58,8 +58,8 @@ public class BulkLoad {
             "close decimal, " +
             "volume bigint, " +
             "adj_close decimal, " +
-            "PRIMARY KEY (ticker, date) " +
-            ") WITH CLUSTERING ORDER BY (date DESC)", KEYSPACE, TABLE);
+            "PRIMARY KEY (date) " +
+            ")", KEYSPACE, TABLE);
 
     /**
      * INSERT statement to bulk load.
@@ -107,6 +107,7 @@ public class BulkLoad {
                 while ((line = csvReader.read()) != null) {
                     // We use Java types here based on
                     // http://www.datastax.com/drivers/java/2.0/com/datastax/driver/core/DataType.Name.html#asJavaClass%28%29
+
                     writer.addRow(
                             DATE_FORMAT.parse(line.get(0)),
                             new BigDecimal(line.get(1)),
