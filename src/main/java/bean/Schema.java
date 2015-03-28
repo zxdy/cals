@@ -21,6 +21,10 @@ public class Schema {
         return schemaContext;
     }
 
+    /**
+     * @param fileName config file
+     * @return file context
+     */
     private String readFileByLines(String fileName) {
         File file = new File(fileName);
         BufferedReader reader = null;
