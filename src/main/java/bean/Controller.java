@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -37,8 +38,8 @@ public class Controller {
         return (String[]) controlParam.get(COLUMNS);
     }
 
-    public String[] getColumnDefList() {
-        return (String[]) controlParam.get(COLUMNS_DEF);
+    public ArrayList getColumnDefList() {
+        return (ArrayList) controlParam.get(COLUMNS_DEF);
 
     }
 
@@ -59,18 +60,18 @@ public class Controller {
      */
     public String buildInsertSTMT() {
 
-        String[] columns = (String[]) controlParam.get(COLUMNS);
+        ArrayList columns = (ArrayList) controlParam.get(COLUMNS);
         String keySpace= (String) controlParam.get(KEY_SPACE);
         String columnFamily = (String) controlParam.get(COLUMN_FAMILY);
         String InsertStatement = "INSERT INTO %s.%s (";
         String InsertColumns = "";
-        String InsertMapkey = "";
-        for (int i = 0; i < columns.length - 2; i++) {
-            InsertColumns = InsertColumns + columns[i] + ",";
-            InsertMapkey = InsertMapkey + "?,";
+        String InsertMapKey = "";
+        for (int i = 0; i < columns.size() - 1; i++) {
+            InsertColumns = InsertColumns + columns.get(i) + ",";
+            InsertMapKey = InsertMapKey + "?,";
         }
 
-        InsertStatement = columns[columns.length - 1] + ") VALUES (" + InsertMapkey + "?)";
+        InsertStatement =InsertStatement+ InsertColumns+columns.get(columns.size() - 1) + ") VALUES (" + InsertMapKey + "?)";
 
 
         return String.format(InsertStatement, keySpace, columnFamily);
@@ -90,8 +91,8 @@ public class Controller {
         BufferedReader reader = null;
 
         JSONObject controlParam= new JSONObject();
-        String[] columnNameList = new String[0];
-        String[] columnDefList = new String[0];
+        ArrayList columnNameList= new ArrayList();
+        ArrayList columnDefList=new ArrayList();
         HashMap keyValue=new HashMap();
 
 
@@ -103,10 +104,10 @@ public class Controller {
                 String[] kv = tempString.split(" ");
                 if( line ==1 ){
                     controlParam.put(KEY_SPACE, kv[0]);
-                    controlParam.put(COLUMN_FAMILY, kv[1]);
+                    controlParam.put(COLUMN_FAMILY, kv[1].split(",")[0]);
                 }else {
-                    columnNameList[line-1]=kv[0];
-                    columnDefList[line-1]=kv[1];
+                    columnNameList.add(kv[0]);
+                    columnDefList.add(kv[1].split(",")[0]);
                 }
                 line++;
             }

@@ -7,6 +7,8 @@ import org.apache.cassandra.config.Config;
 import org.apache.cassandra.dht.Murmur3Partitioner;
 import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.io.sstable.CQLSSTableWriter;
+import org.apache.cassandra.utils.OutputHandler;
+import org.apache.cassandra.utils.UUIDGen;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
@@ -31,8 +33,8 @@ public class CalsMain {
 
         String schemaFileName = args[0];
         String controlFileName = args[1];
-        String dataFile = args[3];
-        String outPutFolder = args[4];
+        String dataFile = args[2];
+        String outPutFolder = args[3];
 
 
         Config.setClientMode(true);
@@ -42,7 +44,9 @@ public class CalsMain {
         CassandraRow crow = new CassandraRow();
 
         String SCHEMA = schema.getSchemaContext();
+        System.out.println(SCHEMA);
         String INSERT_STMT = controller.buildInsertSTMT();
+        System.out.println(INSERT_STMT);
 
         File outputDir = new File(outPutFolder + File.separator + controller.getKeySpace() + File.separator + controller.getColumnFamily());
         if (!outputDir.exists() && !outputDir.mkdirs()) {
@@ -71,12 +75,14 @@ public class CalsMain {
             csvReader.getHeader(false);
             // Write to SSTable while reading data
             List<String> line;
-            String[] columnDef = controller.getColumnDefList();
+            ArrayList columnDef = controller.getColumnDefList();
             while ((line = csvReader.read()) != null) {
                 // We use Java types here based on
                 // http://www.datastax.com/drivers/java/2.0/com/datastax/driver/core/DataType.Name.html#asJavaClass%28%29
-                if (line.size() == columnDef.length) {
-                    ArrayList row = crow.buildRow(line, columnDef);
+                if (line.size()+1 == columnDef.size()) {
+                    ArrayList row = new ArrayList();
+                    row.add(UUIDGen.getTimeUUID());
+                    row.addAll(crow.buildRow(line, columnDef));
                     writer.addRow(row);
                 }
 
@@ -98,7 +104,6 @@ public class CalsMain {
             }
             writer.close();
         }
-
         System.exit(0);
     }
 }

@@ -13,17 +13,17 @@ import java.util.List;
  */
 public class CassandraRow {
 
-    public  ArrayList buildRow(List<String> line, String[] columnDefList) throws ParseException {
+    public  ArrayList buildRow(List<String> line, ArrayList columnDefList) throws ParseException {
 
         ArrayList row = new ArrayList();
 
         SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-        for (int i = 0; i < line.size() - 1; i++) {
+        for (int i = 0; i < line.size(); i++) {
 
             String columnValue=line.get(i);
 
-            String s = columnDefList[i].toString();
+            String s = columnDefList.get(i+1).toString();
             if (s.equals("ascii")) {
                 row.add(columnValue);
 
