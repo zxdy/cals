@@ -26,8 +26,8 @@ public class CalsMain {
      *
      */
     public static void main(String args[]) throws IOException {
-        if (args.length == 0) {
-            System.out.println("usage: Cals.jar schemaFile controlFile dataFile outPutFolder");
+        if (args.length < 4) {
+            System.out.println("usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder>");
             return;
         }
 
