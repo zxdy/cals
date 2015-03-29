@@ -17,7 +17,7 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 
 1. To use this tool, your table's first column must defined as  timeuuid
 2. The csv file should have a header
-3. The scheama and control file's format is very important,you need create them exactly the same foramt as the samples.
+3. The schema and control file's formats are very important,you need create them exactly the same as the sample's.
 
 #How TO Use
 
@@ -54,10 +54,10 @@ If you have ever used the oracle's sqlldr before, you will be much understand of
 
 *  **Following Lines** are used to identify the columns you are going to load data.format:`<columnname> <defination>,`
 
-    1.  The column name and it's defination must be the same as schema file.
-    2.  The orders must be the same as the data in csv file.
-    3.  Case sensitive.please use lower case in both control file and schema file
-    4.  each line must end with `,`
+    *  The column name and it's defination must be the same as schema file.
+    *  The orders must be the same as the data in csv file.
+    *  Case sensitive.please use lower case in both control file and schema file
+    *  each line must end with `,`
 
 **sample:**
 ```
