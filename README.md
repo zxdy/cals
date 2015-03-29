@@ -18,6 +18,7 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 1. To use this tool, your table's first column must defined as  timeuuid
 2. The csv file should have a header
 3. The schema and control file's formats are very important,you need create them exactly the same as the sample's.
+4. the timestamp's format is default to "yyyy-MM-dd". i will enhance it to support more format
 
 #How TO Use
 
