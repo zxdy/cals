@@ -30,7 +30,7 @@ public class CalsMain {
             System.out.println("usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder>");
             return;
         }
-
+        long startTime=System.currentTimeMillis();
         String schemaFileName = args[0];
         String controlFileName = args[1];
         String dataFile = args[2];
@@ -75,18 +75,23 @@ public class CalsMain {
             csvReader.getHeader(false);
             // Write to SSTable while reading data
             List<String> line;
+            int lineNum=1;
             ArrayList columnDef = controller.getColumnDefList();
             while ((line = csvReader.read()) != null) {
                 // We use Java types here based on
                 // http://www.datastax.com/drivers/java/2.0/com/datastax/driver/core/DataType.Name.html#asJavaClass%28%29
+                System.out.println("processing line..." + lineNum);
                 if (line.size()+1 == columnDef.size()) {
                     ArrayList row = new ArrayList();
                     row.add(UUIDGen.getTimeUUID());
                     row.addAll(crow.buildRow(line, columnDef));
                     writer.addRow(row);
                 }
+                lineNum++;
 
             }
+            long endTime=System.currentTimeMillis();
+            System.out.println("time used： "+(endTime-startTime)/1000+"s");
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);

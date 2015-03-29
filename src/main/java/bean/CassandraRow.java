@@ -16,11 +16,7 @@ public class CassandraRow {
     public  ArrayList buildRow(List<String> line, ArrayList columnDefList) throws ParseException {
 
         ArrayList row = new ArrayList();
-
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
         for (int i = 0; i < line.size(); i++) {
-
             String columnValue=line.get(i);
 
             String s = columnDefList.get(i+1).toString();
@@ -40,6 +36,13 @@ public class CassandraRow {
                 row.add(checkColumnValue(columnValue)?columnValue:"null");
 
             } else if (s.equals("timestamp")) {
+                String timeFormat="yyyy-MM-dd";
+//        String timeFormat="MM/dd/yyyy";
+//        String timeFormat="yyyy-MM-dd hh:mm:ss";
+//        String timeFormat="MM/dd/yyyy hh:mm:ss";
+//        String timeFormat="yyyy-MM-dd hh:mm:ss.SSS";
+                //todo format time as defined in control file
+                SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(timeFormat);
                 row.add(DATE_FORMAT.parse(checkColumnValue(columnValue)?columnValue:"1970-01-01"));
 
             } else if (s.equals("timeuuid")) {

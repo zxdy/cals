@@ -106,6 +106,7 @@ public class Controller {
                     controlParam.put(KEY_SPACE, kv[0]);
                     controlParam.put(COLUMN_FAMILY, kv[1].split(",")[0]);
                 }else {
+                    //todo check timestamp format
                     columnNameList.add(kv[0]);
                     columnDefList.add(kv[1].split(",")[0]);
                 }
