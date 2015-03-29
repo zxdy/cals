@@ -28,19 +28,19 @@ public class CassandraRow {
                 row.add(columnValue);
 
             } else if (s.equals("bigint")) {
-                row.add(Long.parseLong(columnValue));
+                row.add(Long.parseLong(checkColumnValue(columnValue)?columnValue:"0"));
 
             } else if (s.equals("decimal")) {
-                row.add(new BigDecimal(columnValue));
+                row.add(new BigDecimal(checkColumnValue(columnValue)?columnValue:"0"));
 
             } else if (s.equals("int")) {
-                row.add(new Integer(columnValue));
+                row.add(new Integer(checkColumnValue(columnValue)?columnValue:"0"));
 
             } else if (s.equals("text")) {
-                row.add(columnValue);
+                row.add(checkColumnValue(columnValue)?columnValue:"null");
 
             } else if (s.equals("timestamp")) {
-                row.add(DATE_FORMAT.parse(columnValue));
+                row.add(DATE_FORMAT.parse(checkColumnValue(columnValue)?columnValue:"1970-01-01"));
 
             } else if (s.equals("timeuuid")) {
                 row.add(UUIDGen.getTimeUUID());
@@ -53,5 +53,12 @@ public class CassandraRow {
         }
 
         return row;
+    }
+    private boolean checkColumnValue(String columnValue){
+        if("".equals(columnValue)||columnValue==null){
+            return false;
+        }else {
+            return true;
+        }
     }
 }
