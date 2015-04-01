@@ -18,7 +18,7 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 1. To use this tool, your table's first column must defined as  timeuuid
 2. The csv file should have a header
 3. The schema and control file's formats are very important,you need create them exactly the same as the sample's.
-4. the timestamp's format is default to "yyyy-MM-dd". i will enhance it to support more format
+4. the timestamp's format is default to "yyyy-MM-dd".
 
 #How TO Use
 
@@ -61,6 +61,7 @@ If you have ever used the oracle's sqlldr before, you will be much understand of
     *  each line must end with `,`
 
 **sample:**
+
 ```
 quote historical_prices,
 id timeuuid,
@@ -72,6 +73,19 @@ close decimal,
 volume bigint,
 adj_close decimal,
 ```
+
+you can also configure the timestamp's format in the control file to match the format of your csv data
+below are some samples,**DO NOT** leave blanks around `<`
+
+```
+date timestamp, //default as yyyy-MM-dd
+date timestamp<yyyy-MM-dd hh:mm:ss,
+date timestamp<yyyy-MM-dd hh:mm:ss.SSS,
+date timestamp<MM/dd/yyyy hh:mm:ss,
+date timestamp<MM/dd/yyyy hh:mm:ss.SSS,
+```
+
+
 
 ## 3. Prepare the CSV file
 

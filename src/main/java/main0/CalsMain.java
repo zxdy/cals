@@ -72,7 +72,7 @@ public class CalsMain {
         try {
             reader = new BufferedReader(new InputStreamReader((new FileInputStream(dataFile))));
             csvReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
-            csvReader.getHeader(false);
+//            csvReader.getHeader(false);
             // Write to SSTable while reading data
             List<String> line;
             int lineNum=1;
@@ -100,7 +100,11 @@ public class CalsMain {
             System.exit(-1);
         } catch (ParseException e) {
             e.printStackTrace();
-        } finally {
+            System.exit(-1);
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            System.exit(-1);
+        }finally {
             if (csvReader != null) {
                 csvReader.close();
             }

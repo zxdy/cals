@@ -24,19 +24,25 @@ public class CassandraRow {
                 row.add(columnValue);
 
             } else if (s.equals("bigint")) {
-                row.add(Long.parseLong(checkColumnValue(columnValue)?columnValue:"0"));
+                row.add(Long.parseLong(checkColumnValue(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("decimal")) {
-                row.add(new BigDecimal(checkColumnValue(columnValue)?columnValue:"0"));
+                row.add(new BigDecimal(checkColumnValue(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("int")) {
-                row.add(new Integer(checkColumnValue(columnValue)?columnValue:"0"));
+                row.add(new Integer(checkColumnValue(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("text")) {
                 row.add(checkColumnValue(columnValue)?columnValue:"null");
 
-            } else if (s.equals("timestamp")) {
+            } else if (s.contains("timestamp")) {
                 String timeFormat="yyyy-MM-dd";
+                if (s.contains("<")) {
+                    if(s.split("<").length==2){
+                        timeFormat=s.split("<")[1];
+                    }
+
+                }
 //        String timeFormat="MM/dd/yyyy";
 //        String timeFormat="yyyy-MM-dd hh:mm:ss";
 //        String timeFormat="MM/dd/yyyy hh:mm:ss";
