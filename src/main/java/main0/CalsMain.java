@@ -9,6 +9,7 @@ import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.io.sstable.CQLSSTableWriter;
 import org.apache.cassandra.utils.OutputHandler;
 import org.apache.cassandra.utils.UUIDGen;
+import org.supercsv.exception.SuperCsvException;
 import org.supercsv.io.CsvListReader;
 import org.supercsv.prefs.CsvPreference;
 
@@ -26,8 +27,8 @@ public class CalsMain {
      *
      */
     public static void main(String args[]) throws IOException {
-        if (args.length < 4) {
-            System.out.println("usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder>");
+        if (args.length < 5) {
+            System.out.println("usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder> <csvheader:hasheader|noheader>");
             return;
         }
         long startTime=System.currentTimeMillis();
@@ -35,6 +36,7 @@ public class CalsMain {
         String controlFileName = args[1];
         String dataFile = args[2];
         String outPutFolder = args[3];
+        String csvHeader =args[4];
 
 
         Config.setClientMode(true);
@@ -70,9 +72,11 @@ public class CalsMain {
         BufferedReader reader = null;
         CsvListReader csvReader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader((new FileInputStream(dataFile))));
+            reader = new BufferedReader(new InputStreamReader((new FileInputStream(dataFile)),"UTF-8"));
             csvReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
-//            csvReader.getHeader(false);
+            if("hasheader".equalsIgnoreCase(csvHeader)){
+                csvReader.getHeader(true);
+            }
             // Write to SSTable while reading data
             List<String> line;
             int lineNum=1;
@@ -90,8 +94,6 @@ public class CalsMain {
                 lineNum++;
 
             }
-            long endTime=System.currentTimeMillis();
-            System.out.println("time used： "+(endTime-startTime)/1000+"s");
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -104,6 +106,8 @@ public class CalsMain {
         } catch (NumberFormatException e){
             e.printStackTrace();
             System.exit(-1);
+        } catch (SuperCsvException e){
+            e.printStackTrace();
         }finally {
             if (csvReader != null) {
                 csvReader.close();
@@ -113,6 +117,8 @@ public class CalsMain {
             }
             writer.close();
         }
+        long endTime=System.currentTimeMillis();
+        System.out.println("time used： "+(endTime-startTime)/1000+"s");
         System.exit(0);
     }
 }

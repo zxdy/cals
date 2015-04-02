@@ -18,7 +18,7 @@ public class CassandraRow {
         ArrayList row = new ArrayList();
         for (int i = 0; i < line.size(); i++) {
             String columnValue=line.get(i);
-
+//            System.out.print(".."+columnValue);
             String s = columnDefList.get(i+1).toString();
             if (s.equals("ascii")) {
                 row.add(columnValue);
