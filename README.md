@@ -6,6 +6,7 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 
 * Use schema and control file to convert csv file
 * Support `timeuuid`,`bigint`,`decimal`,`int`,`text`,`timestamp` column type
+* Support UTF-8
 * Add default value to null column
     * bigint -> 0
     * decimal -> 0
@@ -23,7 +24,7 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 #How TO Use
 
 ```
-usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder>
+usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder> <csvheader:hasheader|noheader>
 ```
 
 ## 1. Create Schema file
@@ -89,11 +90,28 @@ date timestamp<MM/dd/yyyy hh:mm:ss.SSS,
 
 ## 3. Prepare the CSV file
 
-* Add a header for each csv file, or you will lost one line's data
+* use the <csvheader:hasheader|noheader> parameter to skip header
 
 **sample:**
+
+```
+java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder> hasheader
+```
+
 ```
 Date,Open,High,Low,Close,Volume,Adj Close
+2015-03-25,570.50,572.26,558.74,558.78,2110700,558.78
+2015-03-24,562.56,574.59,561.21,570.19,2570100,570.19
+2015-03-23,560.43,562.36,555.83,558.81,1625600,558.81
+2015-03-20,561.65,561.72,559.05,560.36,2585800,560.36
+```
+
+
+```
+java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder> noheader
+```
+
+```
 2015-03-25,570.50,572.26,558.74,558.78,2110700,558.78
 2015-03-24,562.56,574.59,561.21,570.19,2570100,570.19
 2015-03-23,560.43,562.36,555.83,558.81,1625600,558.81
