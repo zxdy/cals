@@ -108,7 +108,11 @@ public class Controller {
                 }else {
                     //todo check timestamp format
                     columnNameList.add(kv[0]);
-                    columnDefList.add(kv[1].split(",")[0]);
+                    if (kv.length==2){
+                        columnDefList.add(kv[1].split(",")[0]);
+                    }else if (kv.length==3){
+                        columnDefList.add(kv[1]+" "+kv[2].split(",")[0]);
+                    }
                 }
                 line++;
             }
