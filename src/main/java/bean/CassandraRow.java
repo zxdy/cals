@@ -24,13 +24,13 @@ public class CassandraRow {
                 row.add(columnValue);
 
             } else if (s.equals("bigint")) {
-                row.add(Long.parseLong(checkColumnValue(columnValue)?columnValue.trim():"0"));
+                row.add(Long.parseLong(isNumeric(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("decimal")) {
-                row.add(new BigDecimal(checkColumnValue(columnValue)?columnValue.trim():"0"));
+                row.add(new BigDecimal(isNumeric(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("int")) {
-                row.add(new Integer(checkColumnValue(columnValue)?columnValue.trim():"0"));
+                row.add(new Integer(isNumeric(columnValue)?columnValue.trim():"0"));
 
             } else if (s.equals("text")) {
                 row.add(checkColumnValue(columnValue)?columnValue:"null");
@@ -69,5 +69,9 @@ public class CassandraRow {
         }else {
             return true;
         }
+    }
+
+    public static boolean isNumeric(String str) {
+        return str.matches("[\\+-]?[0-9]+((.)[0-9])*[0-9]*");
     }
 }
