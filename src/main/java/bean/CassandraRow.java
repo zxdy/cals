@@ -72,6 +72,11 @@ public class CassandraRow {
     }
 
     public static boolean isNumeric(String str) {
-        return str.matches("[\\+-]?[0-9]+((.)[0-9])*[0-9]*");
+        if("".equals(str)||str==null){
+            return false;
+        }else {
+            return str.matches("[\\+-]?[0-9]+((.)[0-9])*[0-9]*");
+        }
+
     }
 }
