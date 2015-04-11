@@ -101,7 +101,7 @@ public class Controller {
             String tempString = null;
             int line = 1;
             while ((tempString = reader.readLine()) != null) {
-                String[] kv = tempString.split(" ");
+                String[] kv = tempString.split("\\s+");
                 if( line ==1 ){
                     controlParam.put(KEY_SPACE, kv[0].trim());
                     controlParam.put(COLUMN_FAMILY, kv[1].split(",")[0].trim());
