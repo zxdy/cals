@@ -103,15 +103,15 @@ public class Controller {
             while ((tempString = reader.readLine()) != null) {
                 String[] kv = tempString.split(" ");
                 if( line ==1 ){
-                    controlParam.put(KEY_SPACE, kv[0]);
-                    controlParam.put(COLUMN_FAMILY, kv[1].split(",")[0]);
+                    controlParam.put(KEY_SPACE, kv[0].trim());
+                    controlParam.put(COLUMN_FAMILY, kv[1].split(",")[0].trim());
                 }else {
                     //todo check timestamp format
-                    columnNameList.add(kv[0]);
+                    columnNameList.add(kv[0].trim());
                     if (kv.length==2){
-                        columnDefList.add(kv[1].split(",")[0]);
+                        columnDefList.add(kv[1].split(",")[0].trim());
                     }else if (kv.length==3){
-                        columnDefList.add(kv[1]+" "+kv[2].split(",")[0]);
+                        columnDefList.add(kv[1].trim()+" "+kv[2].split(",")[0]);
                     }
                 }
                 line++;
