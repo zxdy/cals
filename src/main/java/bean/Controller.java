@@ -101,6 +101,9 @@ public class Controller {
             String tempString = null;
             int line = 1;
             while ((tempString = reader.readLine()) != null) {
+                if("".equalsIgnoreCase(tempString)){
+                    continue;
+                }
                 String[] kv = tempString.split("\\s+");
                 if( line ==1 ){
                     controlParam.put(KEY_SPACE, kv[0].trim());
