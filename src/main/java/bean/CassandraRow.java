@@ -54,7 +54,10 @@ public class CassandraRow {
             } else if (s.equals("timeuuid")) {
                 row.add(UUIDGen.getTimeUUID());
 
-            } else {
+            } else if (s.equals("double")) {
+                row.add(new Double(isNumeric(columnValue)?columnValue.trim():"0"));
+
+            }else {
                 row.add(new String("null"));
 
             }

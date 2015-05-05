@@ -5,11 +5,12 @@ Cals is a tool to create SSTable from csv , and then you can use sstableloader t
 #Features
 
 * Use schema and control file to convert csv file
-* Support `timeuuid`,`bigint`,`decimal`,`int`,`text`,`timestamp` column type
+* Support `timeuuid`,`bigint`,`decimal`,`int`,`text`,`timestamp`,`double` column type
 * Support UTF-8
 * Add default value to null column
     * bigint -> 0
     * decimal -> 0
+    * double -> 0
     * int -> 0
     * text -> "null"
     * timestamp -> "1970-01-01"
