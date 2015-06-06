@@ -1,13 +1,14 @@
-package main0;
+package me.ario.calsroad;
 
-import bean.CassandraRow;
-import bean.Controller;
-import bean.Schema;
+import me.ario.cs.CassandraRow;
+import me.ario.cs.Controller;
+import me.ario.cs.Schema;
+import me.ario.ex.NotExistPathException;
+import me.ario.ex.TimeParseException;
 import org.apache.cassandra.config.Config;
 import org.apache.cassandra.dht.Murmur3Partitioner;
 import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.io.sstable.CQLSSTableWriter;
-import org.apache.cassandra.utils.OutputHandler;
 import org.apache.cassandra.utils.UUIDGen;
 import org.supercsv.exception.SuperCsvException;
 import org.supercsv.io.CsvListReader;
@@ -19,24 +20,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 旭东 on 2015/3/27.
+ * Created by Ario on 2015/3/27.
  */
 public class CalsMain {
 
     /**
-     *
+     * @param args args[0] schemaFileName the DDL definition of the table which going to be load data
+     * @param args args[1] controlFile the control file which is used the structure the fields
+     * @param args args[2] dataFile the csv file which is used to be load
+     * @param args args[3] outPutFolder the destination of the folder for sstable
+     * @param args args[4] csvheader specify if the csv file have the header
+     * @throws IOException
      */
     public static void main(String args[]) throws IOException {
         if (args.length < 5) {
             System.out.println("usage: java -jar cals.jar <schemaFile> <controlFile> <dataFile> <outPutFolder> <csvheader:hasheader|noheader>");
             return;
         }
-        long startTime=System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         String schemaFileName = args[0];
         String controlFileName = args[1];
         String dataFile = args[2];
         String outPutFolder = args[3];
-        String csvHeader =args[4];
+        String csvHeader = args[4];
 
 
         Config.setClientMode(true);
@@ -45,14 +51,17 @@ public class CalsMain {
         Controller controller = new Controller(controlFileName);
         CassandraRow crow = new CassandraRow();
 
+        //build the ddl string
         String SCHEMA = schema.getSchemaContext();
-        System.out.println(SCHEMA);
+        System.out.println(String.format("[*] DDL: %s",SCHEMA));
+        //build the insert string
         String INSERT_STMT = controller.buildInsertSTMT();
-        System.out.println(INSERT_STMT);
+        System.out.println(String.format("[*] Insert statement: %s",INSERT_STMT));
 
+        //setup output folder
         File outputDir = new File(outPutFolder + File.separator + controller.getKeySpace() + File.separator + controller.getColumnFamily());
         if (!outputDir.exists() && !outputDir.mkdirs()) {
-            throw new RuntimeException("Cannot create output directory: " + outputDir);
+            throw new NotExistPathException(outputDir);
         }
 
 
@@ -72,20 +81,20 @@ public class CalsMain {
         BufferedReader reader = null;
         CsvListReader csvReader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader((new FileInputStream(dataFile)),"UTF-8"));
+            reader = new BufferedReader(new InputStreamReader((new FileInputStream(dataFile)), "UTF-8"));
             csvReader = new CsvListReader(reader, CsvPreference.STANDARD_PREFERENCE);
-            if("hasheader".equalsIgnoreCase(csvHeader)){
+            if ("hasheader".equalsIgnoreCase(csvHeader)) {
                 csvReader.getHeader(true);
             }
-            // Write to SSTable while reading data
             List<String> line;
-            int lineNum=1;
-            ArrayList columnDef = controller.getColumnDefList();
+            int lineNum = 1;
+            Object[] columnDef = controller.getColumnDefList();
+
+            // core
+            // map the csv fields with ddl string and insert statement to build the sstable writer per line,
             while ((line = csvReader.read()) != null) {
-                // We use Java types here based on
-                // http://www.datastax.com/drivers/java/2.0/com/datastax/driver/core/DataType.Name.html#asJavaClass%28%29
-                System.out.println("processing line..." + lineNum);
-                if (line.size()+1 == columnDef.size()) {
+                System.out.println("[*] processing line..." + lineNum);
+                if (line.size() == columnDef.length-3) {
                     ArrayList row = new ArrayList();
                     row.add(UUIDGen.getTimeUUID());
                     row.addAll(crow.buildRow(line, columnDef));
@@ -95,19 +104,23 @@ public class CalsMain {
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.print(String.format("file %s not found,exiting...",dataFile));
             System.exit(-1);
         } catch (InvalidRequestException e) {
-            e.printStackTrace();
+            System.out.print(String.format("error happens when add row,exiting...", dataFile));
             System.exit(-1);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (TimeParseException e) {
+            System.out.print(e.getMessage());
             System.exit(-1);
-        } catch (NumberFormatException e){
-            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.print(e.getMessage());
             System.exit(-1);
-        } catch (SuperCsvException e){
-            e.printStackTrace();
+        } catch (SuperCsvException e) {
+            System.out.print(e.getMessage());
+            System.exit(-1);
+        } catch (ClassCastException e){
+            System.out.print(String.format("[-] error '%s' happens when build sstable,check you control file and schema file to be match",e.getMessage()));
+            System.exit(-1);
         }finally {
             if (csvReader != null) {
                 csvReader.close();
@@ -117,8 +130,9 @@ public class CalsMain {
             }
             writer.close();
         }
-        long endTime=System.currentTimeMillis();
-        System.out.println("time used： "+(endTime-startTime)/1000+"s");
+        long endTime = System.currentTimeMillis();
+        System.out.println(String.format("[*] sstable saved to :%s",outputDir));
+        System.out.println(String.format("[*] sstable created successfully\n[*] time used： %d s",(endTime - startTime) / 1000));
         System.exit(0);
     }
 }

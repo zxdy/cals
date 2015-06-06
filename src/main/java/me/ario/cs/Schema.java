@@ -1,4 +1,6 @@
-package bean;
+package me.ario.cs;
+
+import it.unimi.dsi.fastutil.Stack;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,17 +8,25 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * Created by 旭东 on 2015/3/28.
+ * DDL class
+ *
  */
 public class Schema {
 
-    private String schemaContext;
+    private static String schemaContext;
 
-    public Schema(String fileName){
-        String fileContext=readFileByLines(fileName);
-        this.schemaContext=fileContext;
+    /**
+     * @param fileName
+     * @throws IOException
+     */
+    public Schema(String fileName) throws IOException {
+        String fileContext = readFileByLines(fileName);
+        this.schemaContext = fileContext;
     }
 
+    /**
+     * @return return the ddl string
+     */
     public String getSchemaContext() {
         return schemaContext;
     }
@@ -25,27 +35,27 @@ public class Schema {
      * @param fileName config file
      * @return file context
      */
-    private String readFileByLines(String fileName) {
+    private String readFileByLines(String fileName) throws IOException {
         File file = new File(fileName);
         BufferedReader reader = null;
-        String fileContext="";
+        String fileContext = "";
         try {
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
             int line = 1;
             while ((tempString = reader.readLine()) != null) {
-                fileContext=fileContext+tempString;
+                fileContext = fileContext + tempString;
                 line++;
             }
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IOException(String.format("Unexpected error happens when read file", e.getMessage()));
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException e) {
+                    throw new IOException(String.format("Unexpected error happens when close file", e.getMessage()));
                 }
             }
         }
